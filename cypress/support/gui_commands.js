@@ -19,7 +19,11 @@ Cypress.Commands.add('login', (
   login() // Executa a função de login
 })
 
-  Cypress.Commands.add('logout', () => {
+// Adiciona um novo comando customizado chamado 'logout' no Cypress
+Cypress.Commands.add('logout', () => {
+  // Clica no avatar do usuário para abrir o menu de usuário
   cy.get('.qa-user-avatar').click()
+
+  // Clica na opção 'Sign out' para fazer logout
   cy.contains('Sign out').click()
 })
