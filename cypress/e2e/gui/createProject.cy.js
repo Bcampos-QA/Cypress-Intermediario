@@ -1,8 +1,7 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'//biblioteca para gerar dados aleatórios faker(instalado no package-json)
 
 // Descreve o conjunto de testes para a funcionalidade de criação de projetos
 describe('Create Project', () => {
-
   // Antes de cada teste, realiza o login do usuário
   beforeEach(() => {
     cy.login() // Comando customizado Cypress que realiza o login

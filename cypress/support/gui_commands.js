@@ -1,77 +1,50 @@
 // Adiciona um comando customizado chamado 'login' ao Cypress
 Cypress.Commands.add('login', (
-
-  // Parâmetros:
-  // 'user' e 'password' são buscados das variáveis de ambiente
-  // 'cacheSession' é uma flag que define se a sessão deve ser cacheada (valor padrão: true)
-  user = Cypress.env('user_name'),
-  password = Cypress.env('user_password'),
-  { cacheSession = true } = {},
-
+  user = Cypress.env('user_name'),         // Usuário obtido da variável de ambiente
+  password = Cypress.env('user_password'), // Senha obtida da variável de ambiente
+  { cacheSession = true } = {}             // Flag para habilitar cache da sessão (default: true)
 ) => {
 
-  // Função responsável por executar o fluxo de login
   const login = () => {
-    cy.visit('/users/sign_in') // Acessa a página de login
-
-    // Digita o nome de usuário no campo de login
-    cy.get("[data-qa-selector='login_field']").type(user)
-
-    // Digita a senha no campo de senha (sem exibir no log)
-    cy.get("[data-qa-selector='password_field']").type(password, { log: false })
-
-    // Clica no botão de login
-    cy.get("[data-qa-selector='sign_in_button']").click()
+    cy.visit('/users/sign_in')                                            // Acessa a página de login
+    cy.get("[data-qa-selector='login_field']").type(user)                // Preenche o campo de login
+    cy.get("[data-qa-selector='password_field']").type(password, { log: false }) // Preenche o campo de senha sem logar no console
+    cy.get("[data-qa-selector='sign_in_button']").click()                // Clica no botão de login
   }
 
-  // Função de validação usada para verificar se o login foi bem-sucedido
   const validate = () => {
-    cy.visit('/') // Vai para a página inicial
-
-    // Verifica se a URL **não** redirecionou de volta para a tela de login
-    // Isso garante que a sessão está ativa
-    cy.location('pathname', { timeout: 1000 })
-      .should('not.eq', '/users/sign_in')
+    cy.visit('/')                                                         // Visita a página inicial
+    cy.location('pathname', { timeout: 3000 })                            // Espera pela mudança de rota
+      .should('not.eq', '/users/sign_in')                                 // Garante que não está mais na tela de login
   }
 
-  // Define as opções para o uso do cache de sessão
   const options = {
-    cacheAcrossSpecs: true, // Permite reutilizar a sessão entre diferentes arquivos de teste
-    validate,               // Usa a função de validação para confirmar se a sessão ainda é válida
+    cacheAcrossSpecs: true, // Permite reutilizar a sessão em diferentes arquivos de teste
+    validate                // Função de validação da sessão
   }
 
-  // Se o cache estiver ativado, utiliza `cy.session` para armazenar e reutilizar a sessão do usuário
   if (cacheSession) {
-    cy.session(user, login, options)
+    cy.session(user, login, options) // Usa sessão cacheada
   } else {
-    // Caso contrário, executa o login diretamente sem cache
-    login()
+    login()                           // Executa login direto se não usar cache
   }
 })
 
 
-// Adiciona um novo comando customizado chamado 'logout' no Cypress
+// Adiciona um comando customizado chamado 'logout' ao Cypress
 Cypress.Commands.add('logout', () => {
-  // Clica no avatar do usuário para abrir o menu de usuário
-  cy.get('.qa-user-avatar').click()
-
-  // Clica na opção 'Sign out' para fazer logout
-  cy.contains('Sign out').click()
+  cy.get('.qa-user-avatar').should('be.visible').click() // Clica no avatar para abrir o menu
+  cy.contains('Sign out').should('be.visible').click()   // Clica em 'Sign out' para sair
 })
-// Adiciona um comando customizado para criar um projeto via interface gráfica
+
+
+// Adiciona um comando customizado para criar um projeto pela interface
 Cypress.Commands.add('gui_createProject', project => {
-  // Acessa a página de criação de projeto
-  cy.visit('/projects/new')
-
-  // Preenche o nome do projeto
-  cy.get('#project_name').type(project.name)
-
-  // Preenche a descrição do projeto
-  cy.get('#project_description').type(project.description)
-
-  // Marca a opção para inicializar com um README
-  cy.get('.qa-initialize-with-readme-checkbox').check()
-
-  // Clica no botão para criar o projeto
-  cy.contains('Create project').click()
+  cy.visit('/projects/new')                         // Acessa a página de criação de projeto
+  cy.get('#project_name').type(project.name)        // Preenche o nome do projeto
+  cy.get('#project_description').type(project.description) // Preenche a descrição
+  cy.get('.qa-initialize-with-readme-checkbox').check()    // Marca a opção de criar com README
+  cy.contains('Create project').click()             // Clica para criar o projeto
+  cy.url().should('include', '/projects/')          // (Opcional) Verifica redirecionamento
+  cy.contains(project.name).should('be.visible')    // (Opcional) Confirma criação do projeto
 })
