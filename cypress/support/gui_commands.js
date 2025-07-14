@@ -54,4 +54,3 @@ Cypress.Commands.add('gui_createIssue', issue => { // Adiciona um comando person
   cy.get('.qa-issuable-form-description').type(issue.description) // Encontra o campo de descrição da issue e digita a descrição fornecida
   cy.contains('Submit issue').click() // Clica no botão 'Submit issue'
 })
-

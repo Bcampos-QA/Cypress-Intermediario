@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker'//biblioteca para gerar dados aleatórios faker(instalado no package-json)
 
+const options = { env: { snapshotOnly: true } } // Define um objeto 'options' que contém configurações específicas para o ambiente, neste caso, para indicar que apenas snapshots devem ser gerados.
+
 // Descreve o conjunto de testes para a funcionalidade de criação de projetos
-describe('Create Project', () => {
+describe('Create Project',options, () => {
   // Antes de cada teste, realiza o login do usuário
   beforeEach(() => {
     cy.login() // Comando customizado Cypress que realiza o login

@@ -30,3 +30,18 @@ Cypress.Commands.add('api_deleteProjects', () => { // Adiciona um comando person
     }))
   )
 })
+
+Cypress.Commands.add('api_createIssue', issue => { // Adiciona um comando personalizado chamado 'api_createIssue' que aceita um objeto 'issue' como argumento.
+  cy.api_createProject(issue.project) // Primeiro, chama o comando personalizado 'api_createProject' para criar um projeto, usando as informações do projeto contidas no objeto 'issue'.
+    .then(response => { // Quando a criação do projeto for concluída e a resposta da API for recebida, executa a função dentro do 'then'. A 'response' contém os detalhes do projeto recém-criado.
+      cy.request({ // Inicia uma nova requisição HTTP para criar a issue.
+        method: 'POST', // O método da requisição é POST, usado para criar novos recursos.
+        url: `/api/v4/projects/${response.body.id}/issues`, // A URL para criar a issue. O ID do projeto (response.body.id) é extraído da resposta da criação do projeto anterior para associar a issue ao projeto correto.
+        body: { // O corpo da requisição contém os dados da issue a ser criada.
+          title: issue.title, // O título da issue, obtido do objeto 'issue' passado como argumento.
+          description: issue.description // A descrição da issue, também obtida do objeto 'issue'.
+        },
+        headers: { Authorization: accessToken }, // Os cabeçalhos da requisição, incluindo o token de acesso (accessToken) para autenticação na API.
+      })
+    })
+})

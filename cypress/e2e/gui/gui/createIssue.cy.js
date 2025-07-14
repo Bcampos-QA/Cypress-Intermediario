@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker'
 
-describe('Create Issue', () => { // Descreve um conjunto de testes para a funcionalidade 'Criar Issue'
+const options = { env: { snapshotOnly: true } } // Define um objeto 'options' que contém configurações específicas para o ambiente, neste caso, para indicar que apenas snapshots devem ser gerados.
+
+describe('Create Issue', options,() => { // Descreve um conjunto de testes para a funcionalidade 'Criar Issue'
   const issue = { // Define um objeto 'issue' com dados de teste
     title: `issue-${faker.datatype.uuid()}`, // Título da issue gerado dinamicamente com um UUID
     description: faker.random.words(3), // Descrição da issue gerada aleatoriamente
@@ -13,7 +15,8 @@ describe('Create Issue', () => { // Descreve um conjunto de testes para a funcio
  beforeEach(() => { // Executa antes de cada teste dentro do bloco 'describe' em que está inserido
   cy.api_deleteProjects() // Deleta todos os projetos existentes via API antes de cada teste, garantindo um estado limpo
   cy.login() // Realiza o login do usuário (assumindo que 'cy.login()' é um comando personalizado que lida com o processo de login)
-  cy.gui_createProject(issue.project) // Cria um novo projeto através da interface gráfica (GUI), usando os dados do objeto 'issue.project'
+  cy.api_createProject(issue.project)
+ // Cria um novo projeto através da API, usando os dados do objeto 'issue.project'
 })
 
 
