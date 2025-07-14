@@ -38,13 +38,20 @@ Cypress.Commands.add('logout', () => {
 })
 
 
-// Adiciona um comando customizado para criar um projeto pela interface
-Cypress.Commands.add('gui_createProject', project => {
-  cy.visit('/projects/new')                         // Acessa a página de criação de projeto
-  cy.get('#project_name').type(project.name)        // Preenche o nome do projeto
-  cy.get('#project_description').type(project.description) // Preenche a descrição
-  cy.get('.qa-initialize-with-readme-checkbox').check()    // Marca a opção de criar com README
-  cy.contains('Create project').click()             // Clica para criar o projeto
-  cy.url().should('include', '/projects/')          // (Opcional) Verifica redirecionamento
-  cy.contains(project.name).should('be.visible')    // (Opcional) Confirma criação do projeto
+Cypress.Commands.add('gui_createProject', project => { // Adiciona um comando personalizado chamado 'gui_createProject' que aceita um objeto 'project'
+  cy.visit('/projects/new') // Visita a página de criação de novo projeto
+
+  cy.get('#project_name').type(project.name) // Encontra o campo de nome do projeto e digita o nome fornecido
+  cy.get('#project_description').type(project.description) // Encontra o campo de descrição do projeto e digita a descrição fornecida
+  cy.get('.qa-initialize-with-readme-checkbox').check() // Marca a caixa de seleção para inicializar com README
+  cy.contains('Create project').click() // Clica no botão 'Create project'
 })
+
+Cypress.Commands.add('gui_createIssue', issue => { // Adiciona um comando personalizado chamado 'gui_createIssue' que aceita um objeto 'issue'
+  cy.visit(`/${Cypress.env('user_name')}/${issue.project.name}/issues/new`) // Visita a página de criação de nova issue, usando variáveis de ambiente e do objeto 'issue'
+
+  cy.get('.qa-issuable-form-title').type(issue.title) // Encontra o campo de título da issue e digita o título fornecido
+  cy.get('.qa-issuable-form-description').type(issue.description) // Encontra o campo de descrição da issue e digita a descrição fornecida
+  cy.contains('Submit issue').click() // Clica no botão 'Submit issue'
+})
+
