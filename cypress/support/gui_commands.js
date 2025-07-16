@@ -37,8 +37,8 @@ Cypress.Commands.add('logout', () => {
   cy.contains('Sign out').should('be.visible').click()   // Clica em 'Sign out' para sair
 })
 
-
-Cypress.Commands.add('gui_createProject', project => { // Adiciona um comando personalizado chamado 'gui_createProject' que aceita um objeto 'project'
+// Adiciona um comando personalizado chamado 'gui_createProject' que aceita um objeto 'project'
+Cypress.Commands.add('gui_createProject', project => { 
   cy.visit('/projects/new') // Visita a página de criação de novo projeto
 
   cy.get('#project_name').type(project.name) // Encontra o campo de nome do projeto e digita o nome fornecido
@@ -46,11 +46,17 @@ Cypress.Commands.add('gui_createProject', project => { // Adiciona um comando pe
   cy.get('.qa-initialize-with-readme-checkbox').check() // Marca a caixa de seleção para inicializar com README
   cy.contains('Create project').click() // Clica no botão 'Create project'
 })
-
-Cypress.Commands.add('gui_createIssue', issue => { // Adiciona um comando personalizado chamado 'gui_createIssue' que aceita um objeto 'issue'
+// Adiciona um comando personalizado chamado 'gui_createIssue' que aceita um objeto 'issue'
+Cypress.Commands.add('gui_createIssue', issue => { 
   cy.visit(`/${Cypress.env('user_name')}/${issue.project.name}/issues/new`) // Visita a página de criação de nova issue, usando variáveis de ambiente e do objeto 'issue'
 
   cy.get('.qa-issuable-form-title').type(issue.title) // Encontra o campo de título da issue e digita o título fornecido
   cy.get('.qa-issuable-form-description').type(issue.description) // Encontra o campo de descrição da issue e digita a descrição fornecida
   cy.contains('Submit issue').click() // Clica no botão 'Submit issue'
+})
+// Define um comando customizado no Cypress chamado 'gui_setLabelOnIssue' que aceita um objeto 'label'.
+Cypress.Commands.add('gui_setLabelOnIssue', label => { 
+  cy.get('.qa-edit-link-labels').click() // Encontra um elemento com a classe 'qa-edit-link-labels' (provavelmente o botão para editar labels) e clica nele.
+  cy.contains(label.name).click() // Encontra um elemento que contém o texto do nome da label (passado no objeto 'label') e clica nele para selecioná-lo.
+  cy.get('body').click() // Clica no corpo da página. Isso é frequentemente feito para fechar modais, pop-ups ou dropdowns que se abrem após uma interação anterior.
 })
